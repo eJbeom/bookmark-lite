@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bookmark Lite</title>
+    <link rel="stylesheet" href="popup_script.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="container">
+      <nav id="nav">
+        <div class="nav-wrap">
+          <button
+            type="button"
+            class="button theme-switch-button has-icon"
+            aria-haspopup="menu"
+            >mode</button
+          >
+          <button
+            type="button"
+            class="button clear-button has-icon"
+            aria-haspopup="menu"
+            >clear</button
+          >
+        </div>
+      </nav>
+      <main id="main">
+        <div class="lists-empty">Empty</div>
+        <div class="lists-wrap hide">
+          <ul class="item-lists"></ul>
+        </div>
+      </main>
+      <footer id="footer">
+        <span class="developer">made by eJbeom</span>
+      </footer>
+    </div>
+    <script src="../js/popup_script.js"></script>
+  </body>
+</html>

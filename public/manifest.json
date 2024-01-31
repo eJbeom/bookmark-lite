@@ -1,0 +1,19 @@
+{
+  "name": "bookmark-lite",
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "description": "라이트하게 북마크 관리 도구",
+  "action": {
+    "default_popup": "pages/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content_script.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "js/background_script.js"
+  },
+  "permissions": ["storage", "contextMenus", "tabs"]
+}

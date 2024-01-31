@@ -6,7 +6,7 @@ async function onContextMenuClick(): Promise<void> {
     active: true,
     lastFocusedWindow: true,
   });
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getStorageData = await chrome.storage.sync.get(['bmlite']);
   const data: ListItem = {
     id: String(Math.random() * 1000),
@@ -14,7 +14,7 @@ async function onContextMenuClick(): Promise<void> {
     url: currentTab.url,
     favIcon: currentTab.favIconUrl,
   };
-  console.log(currentTab.favIconUrl);
+
   await chrome.storage.sync.set({
     bmlite: getStorageData.bmlite ? [...getStorageData.bmlite, data] : [data],
   });

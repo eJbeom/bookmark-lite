@@ -52,7 +52,7 @@ body {
 }
 
 // nav
-.nav-wrap {
+.button-wrap {
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -69,6 +69,7 @@ body {
 //main
 .lists-empty {
   position: absolute;
+  user-select: none;
   top: 47%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -76,6 +77,7 @@ body {
   font-size: 32px;
   font-weight: 1000;
   color: rgb(211, 211, 211);
+  pointer-events: none;
 }
 
 .hide {
@@ -92,7 +94,7 @@ body {
 
 .item-lists {
   margin-left: 4px;
-
+  user-select: none;
   .item-list {
     display: flex;
     cursor: pointer;
@@ -149,5 +151,16 @@ body {
         background-color: rgb(255, 81, 81);
       }
     }
+  }
+}
+
+#footer {
+  position: relative;
+  .developer {
+    position: absolute;
+    user-select: none;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
   }
 }

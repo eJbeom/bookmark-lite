@@ -13,10 +13,7 @@ const config: Configuration = {
   devtool: mode === 'development' ? 'inline-source-map' : false,
   entry: {
     content_script: path.resolve(__dirname, 'src/scripts/content_script.ts'),
-    background_script: path.resolve(
-      __dirname,
-      'src/scripts/background_script.ts'
-    ),
+    service_worker: path.resolve(__dirname, 'src/scripts/service_worker.ts'),
     popup_script: path.resolve(__dirname, 'src/scripts/popup_script.ts'),
   },
   output: {

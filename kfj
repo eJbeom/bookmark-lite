@@ -1,0 +1,273 @@
+warning: in the working copy of 'public/pages/popup.html', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/public/pages/popup.html b/public/pages/popup.html[m
+[1mindex a894bb7..1f8b46d 100644[m
+[1m--- a/public/pages/popup.html[m
+[1m+++ b/public/pages/popup.html[m
+[36m@@ -27,12 +27,12 @@[m
+             aria-haspopup="menu"[m
+             >mode</button[m
+           >[m
+[31m-          <button[m
+[32m+[m[32m          <!-- <button[m
+             type="button"[m
+             class="button clear-button has-icon"[m
+             aria-haspopup="menu"[m
+             >clear</button[m
+[31m-          >[m
+[32m+[m[32m          > -->[m
+           <button[m
+             type="button"[m
+             class="button page-save-button has-icon"[m
+[1mdiff --git a/public/pages/popup.scss b/public/pages/popup.scss[m
+[1mindex 68746ce..e424a51 100644[m
+[1m--- a/public/pages/popup.scss[m
+[1m+++ b/public/pages/popup.scss[m
+[36m@@ -1,5 +1,6 @@[m
+[31m-$--list-font: 'Noto Sans KR', sans-serif;[m
+[31m-$--empty-font: 'Kanit', sans-serif;[m
+[32m+[m[32m$list-font: 'Noto Sans KR', sans-serif;[m
+[32m+[m[32m$empty-font: 'Kanit', sans-serif;[m
+[32m+[m[32m$list-gap: 4px;[m
+ [m
+ * {[m
+   margin: 0;[m
+[36m@@ -19,6 +20,7 @@[m [mbody {[m
+ [m
+   #header {[m
+     height: 10%;[m
+[32m+[m[32m    border-bottom: 0.3px solid rgb(227, 227, 227);[m
+   }[m
+ [m
+   #main {[m
+[36m@@ -28,10 +30,10 @@[m [mbody {[m
+     overflow-y: auto;[m
+     background-color: rgb(245, 245, 245);[m
+ [m
+[31m-    &::before {[m
+[32m+[m[32m    &::after {[m
+       content: '';[m
+       display: block;[m
+[31m-      margin-bottom: 4px;[m
+[32m+[m[32m      margin-bottom: $list-gap;[m
+     }[m
+     &::-webkit-scrollbar {[m
+       width: 5px;[m
+[36m@@ -72,7 +74,7 @@[m [mbody {[m
+   top: 47%;[m
+   left: 50%;[m
+   transform: translate(-50%, -50%);[m
+[31m-  font-family: var(--empty-font);[m
+[32m+[m[32m  font-family: $empty-font;[m
+   font-size: 32px;[m
+   font-weight: 1000;[m
+   color: rgb(211, 211, 211);[m
+[36m@@ -93,12 +95,16 @@[m [mbody {[m
+ [m
+ .item-lists {[m
+   user-select: none;[m
+[32m+[m[32m  display: flex;[m
+[32m+[m[32m  flex-direction: column;[m
+[32m+[m[32m  gap: $list-gap;[m
+   .item-list {[m
+     display: flex;[m
+     cursor: pointer;[m
+     justify-content: left;[m
+     align-items: center;[m
+[31m-    margin-bottom: 4px;[m
+[32m+[m[32m    // margin-bottom: 4px;[m
+[32m+[m[32m    // gap: 100px;[m
+     border-bottom: 1px solid rgb(212, 212, 212);[m
+     border-radius: 3px;[m
+     background-color: white;[m
+[36m@@ -127,7 +133,7 @@[m [mbody {[m
+       .item-text {[m
+         color: black;[m
+         margin-right: 4px;[m
+[31m-        font-family: var(--list-font);[m
+[32m+[m[32m        font-family: $list-font;[m
+         font-size: 14px; //임시[m
+         pointer-events: none;[m
+       }[m
+[1mdiff --git a/src/scripts/popup_script.ts b/src/scripts/popup_script.ts[m
+[1mindex 4a624d5..3a9472e 100644[m
+[1m--- a/src/scripts/popup_script.ts[m
+[1m+++ b/src/scripts/popup_script.ts[m
+[36m@@ -2,7 +2,11 @@[m [mimport '@/public/pages/popup.scss';[m
+ import LinkListHandler from '../utils/LinkListHandler';[m
+ import { LinkItemElement } from '../utils/elements';[m
+ import { ListItem } from '../types/data';[m
+[31m-import { saveDataAndCloseTab, updateBadgeText } from '../utils/functions';[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  removeCurrentTab,[m
+[32m+[m[32m  addStorageData,[m
+[32m+[m[32m  updateBadgeText,[m
+[32m+[m[32m} from '../utils/functions';[m
+ const linkListElement: HTMLElement = document.querySelector('.item-lists');[m
+ const buttonWrapElement: HTMLElement = document.querySelector('.button-wrap');[m
+ [m
+[36m@@ -18,10 +22,9 @@[m [mdocument.addEventListener('contextmenu', (e) => {[m
+   e.preventDefault();[m
+ });[m
+ [m
+[31m-linkListElement.addEventListener('click', onOpenItemAndDeleteFromList);[m
+[31m-linkListElement.addEventListener('click', onItemRemoveButton);[m
+[31m-buttonWrapElement.addEventListener('click', onSavePageButton);[m
+[31m-buttonWrapElement.addEventListener('click', onClearItemsButton);[m
+[32m+[m[32mlinkListElement.addEventListener('click', handleOpenItemAndDeleteFromList);[m
+[32m+[m[32mlinkListElement.addEventListener('click', handleItemRemoveButton);[m
+[32m+[m[32mbuttonWrapElement.addEventListener('click', handleSavePageButton);[m
+ [m
+ function updatePopup(list: LinkListHandler): void {[m
+   const lists_empty: HTMLElement = document.querySelector('.lists-empty');[m
+[36m@@ -47,7 +50,7 @@[m [mfunction updatePopup(list: LinkListHandler): void {[m
+   });[m
+ }[m
+ [m
+[31m-async function onOpenItemAndDeleteFromList(e: MouseEvent): Promise<void> {[m
+[32m+[m[32masync function handleOpenItemAndDeleteFromList(e: MouseEvent): Promise<void> {[m
+   const target: HTMLLIElement = e.target as HTMLLIElement;[m
+ [m
+   if (target.className === 'item-list') {[m
+[36m@@ -69,22 +72,11 @@[m [masync function onOpenItemAndDeleteFromList(e: MouseEvent): Promise<void> {[m
+       bmlite: [...filter],[m
+     });[m
+ [m
+[31m-    updateBadgeText();[m
+[31m-  }[m
+[31m-}[m
+[31m-[m
+[31m-function onClearItemsButton(e: MouseEvent): void {[m
+[31m-  const list_item: HTMLButtonElement = e.target as HTMLButtonElement;[m
+[31m-[m
+[31m-  if (list_item.classList.contains('clear-button')) {[m
+[31m-    chrome.storage.sync.clear();[m
+[31m-    window.location.reload();[m
+[31m-[m
+[31m-    updateBadgeText();[m
+[32m+[m[32m    void updateBadgeText();[m
+   }[m
+ }[m
+ [m
+[31m-async function onItemRemoveButton(e: MouseEvent): Promise<void> {[m
+[32m+[m[32masync function handleItemRemoveButton(e: MouseEvent): Promise<void> {[m
+   const target: HTMLButtonElement = e.target as HTMLButtonElement;[m
+ [m
+   if (target.classList.contains('item-remove-button')) {[m
+[36m@@ -114,15 +106,15 @@[m [masync function onItemRemoveButton(e: MouseEvent): Promise<void> {[m
+       lists_empty.classList.remove('hide');[m
+     }[m
+ [m
+[31m-    updateBadgeText();[m
+[32m+[m[32m    void updateBadgeText();[m
+   }[m
+ }[m
+ [m
+[31m-function onSavePageButton(e: MouseEvent): void {[m
+[32m+[m[32mfunction handleSavePageButton(e: MouseEvent): void {[m
+   const target: HTMLButtonElement = e.target as HTMLButtonElement;[m
+ [m
+   if (target.classList.contains('page-save-button')) {[m
+[31m-    saveDataAndCloseTab();[m
+[32m+[m[32m    addStorageData(removeCurrentTab());[m
+     updateBadgeText();[m
+   }[m
+ }[m
+[1mdiff --git a/src/scripts/service_worker.ts b/src/scripts/service_worker.ts[m
+[1mindex e4b22db..d285e1e 100644[m
+[1m--- a/src/scripts/service_worker.ts[m
+[1m+++ b/src/scripts/service_worker.ts[m
+[36m@@ -1,4 +1,8 @@[m
+[31m-import { saveDataAndCloseTab, updateBadgeText } from '../utils/functions';[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  removeCurrentTab,[m
+[32m+[m[32m  addStorageData,[m
+[32m+[m[32m  updateBadgeText,[m
+[32m+[m[32m} from '../utils/functions';[m
+ [m
+ createContextMenus();[m
+ [m
+[36m@@ -6,11 +10,12 @@[m [mchrome.windows.onCreated.addListener(() => {[m
+   updateBadgeText();[m
+ });[m
+ [m
+[31m-chrome.contextMenus.onClicked.addListener(onContextMenuClick);[m
+[31m-/** contextMenus 클릭 시 스토리지에 링크를 저장하고 현재 탭을 닫는다. */[m
+[32m+[m[32mchrome.contextMenus.onClicked.addListener(handleContextClick);[m
+ [m
+[31m-function onContextMenuClick(): void {[m
+[31m-  saveDataAndCloseTab();[m
+[32m+[m[32m/** storage에 링크를 저장하고 현재 탭을 닫는다. */[m
+[32m+[m[32mfunction handleContextClick(): void {[m
+[32m+[m[32m  void addStorageData(removeCurrentTab());[m
+[32m+[m[32m  void updateBadgeText();[m
+ }[m
+ [m
+ function createContextMenus(): void {[m
+[1mdiff --git a/src/utils/functions.ts b/src/utils/functions.ts[m
+[1mindex 827d161..ee17060 100644[m
+[1m--- a/src/utils/functions.ts[m
+[1m+++ b/src/utils/functions.ts[m
+[36m@@ -1,27 +1,43 @@[m
+ import { ListItem } from '../types/data';[m
+ [m
+[31m-async function saveDataAndCloseTab(): Promise<void> {[m
+[31m-  const [currentTab]: chrome.tabs.Tab[] = await chrome.tabs.query({[m
+[31m-    active: true,[m
+[31m-    lastFocusedWindow: true,[m
+[31m-  });[m
+[32m+[m[32m/**[m
+[32m+[m[32m * 현재 활성 탭을 제거하고 새로운 탭을 만들며, 해당 탭 정보를 반환합니다.[m
+[32m+[m[32m * 내부적으로 async, await 문법이 사용되었습니다.[m
+[32m+[m[32m */[m
+[32m+[m[32mfunction removeCurrentTab(id?: string): ListItem {[m
+[32m+[m[32m  const item: ListItem = {} as ListItem;[m
+[32m+[m
+[32m+[m[32m  void (async () => {[m
+[32m+[m[32m    const [currentTab]: chrome.tabs.Tab[] = await chrome.tabs.query({[m
+[32m+[m[32m      active: true,[m
+[32m+[m[32m      lastFocusedWindow: true,[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    item.id = id ?? self.crypto.randomUUID();[m
+[32m+[m[32m    item.title = currentTab.title;[m
+[32m+[m[32m    item.url = currentTab.url;[m
+[32m+[m[32m    item.favIcon = currentTab.favIconUrl;[m
+[32m+[m
+[32m+[m[32m    if (currentTab.index === 0) chrome.tabs.create({});[m
+[32m+[m[32m    chrome.tabs.remove(currentTab.id);[m
+[32m+[m[32m  })();[m
+[32m+[m
+[32m+[m[32m  return item;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32masync function addStorageData(item: ListItem): Promise<void> {[m
+   const getStorageData: { [key: string]: ListItem[] } =[m
+     await chrome.storage.sync.get(['bmlite']);[m
+   const data: ListItem = {[m
+[31m-    id: self.crypto.randomUUID(),[m
+[31m-    title: currentTab.title,[m
+[31m-    url: currentTab.url,[m
+[31m-    favIcon: currentTab.favIconUrl,[m
+[32m+[m[32m    id: item.id,[m
+[32m+[m[32m    title: item.title,[m
+[32m+[m[32m    url: item.url,[m
+[32m+[m[32m    favIcon: item.favIcon,[m
+   };[m
+ [m
+   chrome.storage.sync.set({[m
+     bmlite: getStorageData.bmlite ? [...getStorageData.bmlite, data] : [data],[m
+   });[m
+[31m-[m
+[31m-  updateBadgeText();[m
+[31m-[m
+[31m-  if (currentTab.index === 0) chrome.tabs.create({});[m
+[31m-  chrome.tabs.remove(currentTab.id);[m
+ }[m
+ [m
+ async function updateBadgeText(): Promise<void> {[m
+[36m@@ -33,4 +49,4 @@[m [masync function updateBadgeText(): Promise<void> {[m
+   });[m
+ }[m
+ [m
+[31m-export { saveDataAndCloseTab, updateBadgeText };[m
+[32m+[m[32mexport { removeCurrentTab, addStorageData, updateBadgeText };[m

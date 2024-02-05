@@ -1,16 +1,23 @@
-import { saveDataAndCloseTab, updateBadgeText } from '../utils/functions';
+import {
+  removeCurrentTab,
+  addStorageData,
+  updateBadgeText,
+} from '../utils/functions';
 
 createContextMenus();
 
 chrome.windows.onCreated.addListener(() => {
-  updateBadgeText();
+  void updateBadgeText();
 });
 
-chrome.contextMenus.onClicked.addListener(onContextMenuClick);
-/** contextMenus 클릭 시 스토리지에 링크를 저장하고 현재 탭을 닫는다. */
+chrome.contextMenus.onClicked.addListener(handleContextClick);
 
-function onContextMenuClick(): void {
-  saveDataAndCloseTab();
+/** storage에 링크를 저장하고 현재 탭을 닫는다. */
+function handleContextClick(): void {
+  (async () => {
+    await addStorageData(await removeCurrentTab());
+    void updateBadgeText();
+  })();
 }
 
 function createContextMenus(): void {

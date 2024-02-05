@@ -2,7 +2,11 @@ import '@/public/pages/popup.scss';
 import LinkListHandler from '../utils/LinkListHandler';
 import { LinkItemElement } from '../utils/elements';
 import { ListItem } from '../types/data';
-import { saveDataAndCloseTab, updateBadgeText } from '../utils/functions';
+import {
+  removeCurrentTab,
+  addStorageData,
+  updateBadgeText,
+} from '../utils/functions';
 const linkListElement: HTMLElement = document.querySelector('.item-lists');
 const buttonWrapElement: HTMLElement = document.querySelector('.button-wrap');
 
@@ -18,10 +22,9 @@ document.addEventListener('contextmenu', (e) => {
   e.preventDefault();
 });
 
-linkListElement.addEventListener('click', onOpenItemAndDeleteFromList);
-linkListElement.addEventListener('click', onItemRemoveButton);
-buttonWrapElement.addEventListener('click', onSavePageButton);
-buttonWrapElement.addEventListener('click', onClearItemsButton);
+linkListElement.addEventListener('click', handleListItemClick);
+linkListElement.addEventListener('click', handleItemRemoveButton);
+buttonWrapElement.addEventListener('click', handleSavePageButton);
 
 function updatePopup(list: LinkListHandler): void {
   const lists_empty: HTMLElement = document.querySelector('.lists-empty');
@@ -47,7 +50,7 @@ function updatePopup(list: LinkListHandler): void {
   });
 }
 
-async function onOpenItemAndDeleteFromList(e: MouseEvent): Promise<void> {
+async function handleListItemClick(e: MouseEvent): Promise<void> {
   const target: HTMLLIElement = e.target as HTMLLIElement;
 
   if (target.className === 'item-list') {
@@ -69,22 +72,11 @@ async function onOpenItemAndDeleteFromList(e: MouseEvent): Promise<void> {
       bmlite: [...filter],
     });
 
-    updateBadgeText();
+    void updateBadgeText();
   }
 }
 
-function onClearItemsButton(e: MouseEvent): void {
-  const list_item: HTMLButtonElement = e.target as HTMLButtonElement;
-
-  if (list_item.classList.contains('clear-button')) {
-    chrome.storage.sync.clear();
-    window.location.reload();
-
-    updateBadgeText();
-  }
-}
-
-async function onItemRemoveButton(e: MouseEvent): Promise<void> {
+async function handleItemRemoveButton(e: MouseEvent): Promise<void> {
   const target: HTMLButtonElement = e.target as HTMLButtonElement;
 
   if (target.classList.contains('item-remove-button')) {
@@ -114,15 +106,17 @@ async function onItemRemoveButton(e: MouseEvent): Promise<void> {
       lists_empty.classList.remove('hide');
     }
 
-    updateBadgeText();
+    void updateBadgeText();
   }
 }
 
-function onSavePageButton(e: MouseEvent): void {
+function handleSavePageButton(e: MouseEvent): void {
   const target: HTMLButtonElement = e.target as HTMLButtonElement;
 
   if (target.classList.contains('page-save-button')) {
-    saveDataAndCloseTab();
-    updateBadgeText();
+    (async () => {
+      await addStorageData(await removeCurrentTab());
+      void updateBadgeText();
+    })();
   }
 }

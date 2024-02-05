@@ -1,5 +1,6 @@
-$--list-font: 'Noto Sans KR', sans-serif;
-$--empty-font: 'Kanit', sans-serif;
+$list-font: 'Noto Sans KR', sans-serif;
+$empty-font: 'Kanit', sans-serif;
+$list-gap: 4px;
 
 * {
   margin: 0;
@@ -19,6 +20,7 @@ body {
 
   #header {
     height: 10%;
+    border-bottom: 0.3px solid rgb(227, 227, 227);
   }
 
   #main {
@@ -28,10 +30,10 @@ body {
     overflow-y: auto;
     background-color: rgb(245, 245, 245);
 
-    &::before {
+    &::after {
       content: '';
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: $list-gap;
     }
     &::-webkit-scrollbar {
       width: 5px;
@@ -72,7 +74,7 @@ body {
   top: 47%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: var(--empty-font);
+  font-family: $empty-font;
   font-size: 32px;
   font-weight: 1000;
   color: rgb(211, 211, 211);
@@ -93,12 +95,16 @@ body {
 
 .item-lists {
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: $list-gap;
   .item-list {
     display: flex;
     cursor: pointer;
     justify-content: left;
     align-items: center;
-    margin-bottom: 4px;
+    // margin-bottom: 4px;
+    // gap: 100px;
     border-bottom: 1px solid rgb(212, 212, 212);
     border-radius: 3px;
     background-color: white;
@@ -127,7 +133,7 @@ body {
       .item-text {
         color: black;
         margin-right: 4px;
-        font-family: var(--list-font);
+        font-family: $list-font;
         font-size: 14px; //임시
         pointer-events: none;
       }

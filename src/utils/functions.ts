@@ -1,46 +1,42 @@
-import { ListItem } from '../types/data';
+import { ListItem } from '../types/listitem';
+import { getAllSyncData, setSyncData } from './storagemanager';
+import { openTab, removeTab } from './tabmanager';
 
-async function removeCurrentTab(id?: string): Promise<ListItem> {
-  const [currentTab]: chrome.tabs.Tab[] = await chrome.tabs.query({
-    active: true,
-    lastFocusedWindow: true,
+async function removeCurrentTab(): Promise<ListItem> {
+  const Tabs: chrome.tabs.Tab[] = await chrome.tabs.query({
+    currentWindow: true,
   });
-  const item: ListItem = {
-    id: id ?? self.crypto.randomUUID(),
-    title: currentTab.title,
-    url: currentTab.url,
-    favIcon: currentTab.favIconUrl,
-  };
+  const item: ListItem = {} as ListItem;
 
-  if (currentTab.index === 0) chrome.tabs.create({});
-  chrome.tabs.remove(currentTab.id);
+  for (const tab of Tabs) {
+    if (tab.active === true) {
+      item.id = self.crypto.randomUUID();
+      item.title = tab.title;
+      item.url = tab.url;
+      item.favIcon = tab.favIconUrl;
 
-  return new Promise((resolve) => resolve(item));
+      if (Tabs.length === 1) openTab();
+      removeTab(tab.id);
+    }
+  }
+
+  return item;
 }
 
-async function addStorageData(item: ListItem): Promise<boolean> {
-  const getStorageData: { [key: string]: ListItem[] } =
-    await chrome.storage.sync.get(['bmlite']);
-  const data: ListItem = {
+async function addStorageData(item: ListItem): Promise<void> {
+  setSyncData(await getAllSyncData(), {
     id: item.id,
     title: item.title,
     url: item.url,
     favIcon: item.favIcon,
-  };
-
-  chrome.storage.sync.set({
-    bmlite: getStorageData.bmlite ? [...getStorageData.bmlite, data] : [data],
   });
-
-  return new Promise((resolve) => resolve(true));
 }
 
 async function updateBadgeText(): Promise<void> {
-  const getStorageData: { [key: string]: ListItem[] } =
-    await chrome.storage.sync.get(['bmlite']);
+  const len = (await getAllSyncData())?.length;
 
   chrome.action.setBadgeText({
-    text: `${getStorageData.bmlite.length}`,
+    text: `${len ? len : ''}`,
   });
 }
 

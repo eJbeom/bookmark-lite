@@ -1,4 +1,4 @@
-import { ListItem } from '../types/data';
+import { ListItem } from '../types/listitem';
 
 function LinkItemElement(data: ListItem): HTMLLIElement {
   const item: HTMLLIElement = document.createElement('li');

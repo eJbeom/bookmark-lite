@@ -25,7 +25,7 @@ function LinkItemElement(data: ListItem): HTMLLIElement {
   wrap.appendChild(text);
 
   item.appendChild(wrap);
-  item.appendChild(removeButton);
+  // item.appendChild(removeButton);
 
   return item;
 }

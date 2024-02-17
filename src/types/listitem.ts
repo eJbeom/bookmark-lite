@@ -5,4 +5,11 @@ interface ListItem {
   favIcon: string;
 }
 
-export { ListItem };
+interface LinkItem {
+  id: string;
+  title: string;
+  url: string;
+  favIcon: string;
+}
+
+export { ListItem, LinkItem };

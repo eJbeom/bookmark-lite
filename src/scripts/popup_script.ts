@@ -44,6 +44,8 @@ class App {
 
     this.ListsElement.addEventListener('click', this.handleListItemClick);
     this.ListsElement.addEventListener('click', this.handleItemRemoveButton);
+    // this.ListsElement.addEventListener('click', this.handleItemReviseButton);
+
     this.buttonWrapElement.addEventListener('click', this.handleSavePageButton);
   }
 
@@ -80,15 +82,27 @@ class App {
     if (!target.classList.contains('item-remove-button')) return;
 
     getAllSyncData().then((items) => {
-      removeSyncData(items, findSyncData(items, target.parentElement.id)); //체이닝으로 변경 필요
+      removeSyncData(items, findSyncData(items, target.parentElement.id));
       updateBadgeText();
     });
 
     window.location.reload();
   }
 
+  // handleItemReviseButton(e: MouseEvent) {
+  //   const target: HTMLButtonElement = e.target as HTMLButtonElement;
+
+  //   if (!target.classList.contains('item-revise-button')) return;
+
+  //   getAllSyncData().then((items) => {
+  //     const itemIndex = items.findIndex((item) => item.id === target.id);
+  //     updateBadgeText();
+  //   });
+  // }
+
   handleSavePageButton(e: MouseEvent): void {
     const target: HTMLButtonElement = e.target as HTMLButtonElement;
+    console.log(e);
 
     if (target.classList.contains('save-page-button')) {
       (async () => {

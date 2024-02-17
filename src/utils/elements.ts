@@ -6,6 +6,7 @@ function LinkItemElement(data: ListItem): HTMLLIElement {
   const favIcon: HTMLImageElement = document.createElement('img');
   const text: HTMLParagraphElement = document.createElement('p');
   const removeButton: HTMLButtonElement = document.createElement('button');
+  const reviseButton: HTMLButtonElement = document.createElement('button');
 
   favIcon.className = 'item-favIcon';
   favIcon.src = data.favIcon;
@@ -13,19 +14,21 @@ function LinkItemElement(data: ListItem): HTMLLIElement {
   text.className = 'item-text';
   text.textContent = data.title;
 
-  removeButton.className = 'item-remove-button';
-  removeButton.textContent = '🗑️';
-
-  item.className = 'item-list';
-  item.id = data.id;
-
   wrap.className = 'item-wrap';
-
   wrap.appendChild(favIcon);
   wrap.appendChild(text);
 
+  removeButton.className = 'item-button item-remove-button';
+  removeButton.textContent = '🗑️';
+
+  reviseButton.className = 'item-button item-revise-button';
+  reviseButton.textContent = '✍🏻';
+
+  item.className = 'item-list';
+  item.id = data.id;
   item.appendChild(wrap);
   // item.appendChild(removeButton);
+  // item.appendChild(reviseButton);
 
   return item;
 }

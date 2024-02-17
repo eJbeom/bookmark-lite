@@ -23,17 +23,11 @@ export default class ListOrderManager {
   }
 
   onMove(e: MouseEvent) {
-    if (this.target instanceof HTMLLIElement && this.button === 0) {
-      const element = document.getElementById(`${this.target.id}`);
-      element.style.position = 'absolute';
-      element.style.width = '100%';
-      element.style.transform = `translateY(${e.clientY - 46}px)`;
-    }
-
     if (
       !this.isList ||
       !(e.target instanceof HTMLLIElement) ||
-      this.button !== 0
+      this.button !== 0 ||
+      this.target.id === e.target.id
     )
       return;
 
@@ -43,8 +37,10 @@ export default class ListOrderManager {
     if (this.line.isExist) this.line.removeLine();
 
     if (e.clientY > rectLine) {
+      this.line.node = e.target;
       this.line.createAfterLine(e.target);
-    } else if (e.clientY < rectLine) {
+    } else if (e.clientY <= rectLine) {
+      this.line.node = e.target.previousSibling as HTMLLIElement;
       this.line.createBeforeLine(e.target);
     }
 

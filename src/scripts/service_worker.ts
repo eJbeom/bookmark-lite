@@ -1,31 +1,47 @@
-import {
-  removeCurrentTab,
-  addStorageData,
-  updateBadgeText,
-} from '../utils/functions';
+import StorageManager from './controllers/storagemanager';
+import TabsManager from './controllers/tabsmanager';
+import { updateBadgeText } from '../utils/functions';
+import { LinkItem } from '../types/listitem';
 
-createContextMenus();
+class ServiceWorkerManager {
+  tabs: TabsManager;
+  storage: StorageManager<LinkItem>;
 
-chrome.windows.onCreated.addListener(() => {
-  void updateBadgeText();
-});
+  constructor() {
+    this.tabs = new TabsManager();
+    this.storage = new StorageManager('bmlite');
+    this.update();
+  }
 
-chrome.contextMenus.onClicked.addListener(handleContextClick);
+  update() {
+    this.createContextMenus();
 
-/** storage에 링크를 저장하고 현재 탭을 닫는다. */
-function handleContextClick(): void {
-  (async () => {
-    await addStorageData(await removeCurrentTab());
-    void updateBadgeText();
-  })();
+    chrome.windows.onCreated.addListener(this.handleUpdateBadgeText);
+    chrome.contextMenus.onClicked.addListener(this.handleContextClick);
+  }
+
+  createContextMenus(): void {
+    const callback = () => {
+      chrome.contextMenus.create({
+        id: 'page_save',
+        title: '페이지 저장',
+        contexts: ['page'],
+      });
+    };
+
+    chrome.contextMenus.removeAll(callback);
+  }
+
+  handleUpdateBadgeText = () => {
+    updateBadgeText();
+  };
+
+  handleContextClick = async () => {
+    const curTabInfo = await this.tabs.SaveAndCloseCurTab();
+
+    await this.storage.setData(await this.storage.getData(), curTabInfo);
+    updateBadgeText();
+  };
 }
 
-function createContextMenus(): void {
-  chrome.contextMenus.removeAll(function () {
-    chrome.contextMenus.create({
-      id: 'page_save',
-      title: '페이지 저장',
-      contexts: ['page'],
-    });
-  });
-}
+new ServiceWorkerManager();

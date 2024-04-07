@@ -1,15 +1,3 @@
-# 🚀 Welcome to your new awesome project!
+## 북마크-Lite
 
-This project has been created using **webpack-cli**, you can now run
-
-```
-npm run build
-```
-
-or
-
-```
-yarn build
-```
-
-to bundle your application
+학습용에 적합한 북마크 라이트 크롬 익스텐션입니다.
